@@ -4,7 +4,7 @@ import * as React from 'react';
 import {View, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NewsScreen, SplashScreen} from '../screens';
+import {DetailNewsScreen, NewsScreen, SplashScreen} from '../screens';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +22,13 @@ function MainNavigator() {
         <Stack.Screen
           name="NewsScreen"
           component={NewsScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+         <Stack.Screen
+          name="DetailNewsScreen"
+          component={DetailNewsScreen}
           options={{
             headerShown: false,
           }}

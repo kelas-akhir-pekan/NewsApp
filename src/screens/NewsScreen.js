@@ -1,28 +1,52 @@
+import { useNavigation, } from '@react-navigation/native';
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 
 const NewsScreen = () => {
+
+  const navigation = useNavigation()
   const [data, setData] = useState([
-    {
-      title: 'Harbolnas 2023',
-      description:
-        'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum vlorem ipsum vvlorem ipsum lorem ipsum vlorem ipsum lorem ipsum lorem ipsum lorem ipsum vvlorem ipsum vvlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum vlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-      image:
-        'https://imagekit.io/blog/content/images/2019/12/image-optimization.jpg',
-    },
-    {
-      title: 'Argentina vs Indonesia 2023',
-      description: 'lorem ipsum',
-      image:
-        'https://imagekit.io/blog/content/images/2019/12/image-optimization.jpg',
-    },
-    {
-      title: 'Messi gak jadi datang ke Indonesia',
-      description: 'lorem ipsum',
-      image:
-        'https://imagekit.io/blog/content/images/2019/12/image-optimization.jpg',
-    },
+     
   ]);
+const navigateToDetail =(value)=>{
+  navigation.navigate('DetailNewsScreen',{
+    detail:value
+  })
+}
+const getData =()=>{
+      fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.antaranews.com%2Frss%2Fterkini.xml', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+  .then(response => response.json())
+  .then(json => {
+      // console.warn('DATA BERITA',json)
+      if(json?.status=='ok'){
+        const newData = json?.items.map((value)=>{
+          return {
+            title:value?.title,
+            description:value?.content,
+            image:value?.enclosure?.link,
+            date:value?.pubDate
+          }
+        })
+        console.warn("Data baru",newData)
+        setData(newData)
+      }
+    })
+  .catch(error => {
+      console.error(error);
+    });
+}
+useEffect(()=>{
+//Run code..
+getData()
+
+},[])
+
   return (
     <View style={styles.container}>
       {/* header */}
@@ -36,11 +60,11 @@ const NewsScreen = () => {
             <View style={styles.contentWrapper} key={key}>
               <Image source={{uri: value.image}} style={styles.imageContent} />
               <View style={styles.textWrapper}>
-                <Text style={styles.textContent}>{value.title}</Text>
+                <Text style={styles.textContent} numberOfLines={2}>{value.title}</Text>
                 <Text style={styles.textDescContent} numberOfLines={1}>
                   {value.description}
                 </Text>
-                <Text style={styles.textMoreContent}>Selengkapnya</Text>
+                <Text style={styles.textMoreContent} onPress={()=>navigateToDetail(value)}>Selengkapnya</Text>
               </View>
             </View>
           );
